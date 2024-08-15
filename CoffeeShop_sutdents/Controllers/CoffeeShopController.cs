@@ -48,6 +48,56 @@ namespace CoffeeShop_sutdents.Controllers
             }
             return Ok(order);
         }
-       
+
+        // יצירה של הזמנה חדשה
+
+        // POST: api/CoffeeShop
+
+        [HttpPost]
+        public async Task<ActionResult<CoffeeOrder>> CreateOrder(CoffeeOrder order)
+        {
+            await Task.Delay(1000);
+           order.Id = _nextId++;
+            order.OrderDate = DateTime.Now;
+            _orders.Add(order);
+
+            return Ok(order);
+
+        }
+
+
+        // עריכה של פריט קיים
+        [HttpPut("{id}")]
+        public async Task<ActionResult<string>> UpdateOrder(int id, CoffeeOrder order)
+        {
+            await Task.Delay(1000);
+            var existOrder = _orders.FirstOrDefault(order => order.Id == id);
+            if (existOrder == null)
+            {
+                return NotFound();
+            }
+
+            existOrder.CustomerName = order.CustomerName;
+            existOrder.CoffeeType = order.CoffeeType;
+            existOrder.Quantity = order.Quantity;
+
+            return "Edit Successful";
+        }
+
+        // DELETE: api/CoffeeShop/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<string>> DeleteOrder(int id)
+        {
+            await Task.Delay(1000);
+            var order = _orders.FirstOrDefault(order => order.Id==id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            _orders.Remove(order);
+
+            return "מחקת בהצלחה!!!";
+        }
+
     }
 }
